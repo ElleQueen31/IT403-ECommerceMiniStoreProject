@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 40px auto; padding: 20px;">
+    <h1 style="color: var(--text-dark); margin-bottom: 20px;">Shipping & Profile Settings</h1>
+    
+    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        
+        <h2 style="font-size: 1.5rem; color: var(--theme-gold); margin-bottom: 15px;">Default Shipping Details</h2>
+        <p style="color: #777; margin-bottom: 30px;">I-save ang inyong default address. Ito ang awtomatikong lalabas sa checkout form.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <button type="submit" style="margin-top: 20px; padding: 12px 30px; background-color: var(--theme-gold); color: white; border: none; border-radius: 30px; font-weight: 600;">
+                Save Profile
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop - Julynesha{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- THEME COLORS --- */
+    :root {
+        --theme-gold: #ddaa55;       
+        --theme-gold-dark: #c29448;  
+        --theme-gold-light: #fdf6e7; 
+        --text-dark: #1a1a1a;
+    }
+
+    /* Product Grid */
+    .pro-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 25px;
+        padding-top: 20px;
+        justify-content: center;
+    }
+
+    .pro {
+        width: 100%;
+        border: 1px solid #ececec;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        transition: 0.3s ease;
+        background: #fff;
+        display: flex;
+        flex-direction: column; 
+        justify-content: space-between;
+        height: 100%; 
+        cursor: pointer; 
+        position: relative;
+    }
+
+    .pro:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+
+    .pro img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover; 
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .pro .des {
+        text-align: start;
+        padding: 8px 0;
+        flex-grow: 1; 
+    }
+
+    .pro .des span {
+        color: #606063;
+        font-size: 13px;
+        text-transform: capitalize;
+    }
+
+    .pro .des h5 {
+        padding-top: 7px;
+        color: var(--text-dark);
+        font-size: 15px;
+        font-weight: 700;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2; 
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 42px; 
+        margin-bottom: 5px;
+    }
+
+    .pro .des i { font-size: 12px; color: rgb(243, 181, 25); }
+
+    .pro .des h4 {
+        padding-top: 7px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--theme-gold);
+    }
+
+    .pro .cart-btn-link {
+        align-self: flex-end; 
+        width: 45px; 
+        height: 45px;
+        line-height: 45px;
+        border-radius: 50px;
+        background-color: var(--theme-gold-light);
+        color: var(--theme-gold);
+        border: 1px solid #efe3cc;
+        text-align: center;
+        transition: 0.3s;
+        margin-top: auto; 
+        font-size: 18px;
+        z-index: 10;
+    }
+
+    .pro .cart-btn-link:hover {
+        background-color: var(--theme-gold);
+        color: #fff;
+        border-color: var(--theme-gold);
+    }
+
+    /* Pagination */
+    #pagination {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    #pagination a {
+        text-decoration: none;
+        background-color: var(--theme-gold);
+        padding: 12px 18px;
+        border-radius: 4px;
+        color: #fff;
+        font-weight: 600;
+        margin: 0 5px;
+        transition: 0.3s ease;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    #pagination a.active {
+        background-color: var(--theme-gold-dark);
+        cursor: default;
+        transform: scale(1.05);
+    }
+
+    #pagination a:hover:not(.active) {
+        background-color: var(--theme-gold-dark);
+        transform: translateY(-2px);
+    }
+    
+    #pagination i { font-size: 14px; }
+</style>
+
+<section id="shop" class="section-p1 shop-page">
+    
+  <form method="get" action="{% url 'shop' %}" class="shop-search">
+    <input
+      type="text"
+      name="q"
+      placeholder="Search products..."
+      value="{{ query|default:'' }}"
+    />
+    <button type="submit">
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+
+  <div class="shop-categories">
+    <a href="{% url 'shop' %}" class="pill {% if not category %}active{% endif %}">All Products</a>
+    {% for cat in categories %}
+        <a href="{% url 'product_list_by_category' cat.slug %}" 
+           class="pill {% if category.slug == cat.slug %}active{% endif %}">
+           {{ cat.name }}
+        </a>
+    {% endfor %}
+  </div>
+
+  <section id="product1">
+    <h2 id="shop-title">
+        {% if category %}{{ category.name }}{% else %}All Products{% endif %}
+    </h2>
+    <p id="shop-subtitle">Discover our curated collections</p>
+
+    <div class="pro-container">
+      
+      {% for product in products %}
+      <div class="pro" 
+           data-category="{{ product.category.slug|default:'all' }}" 
+           data-name="{{ product.name }}"
+           data-url="{% url 'product_detail' product.slug %}" 
+           onclick="window.location.href=this.dataset.url;">
+        
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'MiniStore/products/dress/sage.png' %}" alt="Default Image">
+        {% endif %}
+
+        <div class="des">
+          <span>{{ product.category.name|default:"General" }}</span>
+          <h5>{{ product.name }}</h5>
+          
+          <div class="star">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          
+          <h4>₱{{ product.price }}</h4>
+        </div>
+
+        <a href="javascript:void(0);" 
+           data-url="{% url 'cart_add' product.id %}" 
+           class="cart-btn-link add-to-cart-ajax">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
+
+      </div>
+      {% empty %}
+        <div style="text-align: center; width: 100%; grid-column: 1 / -1; padding: 40px;">
+            <h3>No products found</h3>
+            <p>Please go to your Seller Dashboard or Admin Panel to add products.</p>
+        </div>
+      {% endfor %}
+
+    </div> 
+  </section>
+
+  {% if products.has_other_pages %}
+  <section id="pagination" class="section-p1">
+      {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-long-arrow-alt-left"></i>
+        </a>
+      {% endif %}
+
+      {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+            <a href="#" class="active">{{ num }}</a>
+        {% else %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+            <i class="fas fa-long-arrow-alt-right"></i>
+        </a>
+      {% endif %}
+  </section>
+  {% endif %}
+
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const cartButtons = document.querySelectorAll('.add-to-cart-ajax');
+
+        cartButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const url = this.getAttribute('data-url');
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        alert("Item added to cart!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile | Julynesha{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Force Sans-Serif on Inputs */
+    input, select, textarea, .form-control {
+        font-family: 'Poppins', system-ui, -apple-system, sans-serif !important;
+        font-size: 0.95rem;
+        color: #333;
+        border: 1px solid #e1e1e1;
+        padding: 10px 15px;
+        border-radius: 6px;
+    }
+    input:focus {
+        border-color: #ddaa55;
+        box-shadow: 0 0 0 0.1rem rgba(221, 170, 85, 0.2);
+        outline: none;
+    }
+    input:focus::placeholder { color: transparent !important; }
+    
+    /* Theme Colors */
+    .theme-heading { font-family: 'Playfair Display', serif; color: #1a1a1a; }
+    .btn-theme { background-color: #ddaa55; border: none; transition: 0.3s; color: #fff; }
+    .btn-theme:hover { background-color: #c29448; transform: translateY(-2px); color: #fff; }
+    
+    /* Tab Content Logic */
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    {% if messages %}
+        {% for message in messages %}
+        <div class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    {% if message.tags == 'success' %} <i class="fas fa-check-circle me-2 text-success"></i>
+                    {% elif message.tags == 'error' %} <i class="fas fa-exclamation-circle me-2 text-danger"></i> {% endif %}
+                    {{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="container my-5" style="min-height: 80vh; max-width: 950px;">
+    
+    <h2 class="theme-heading fw-bold mb-5 text-center" id="page-title">My Profile</h2>
+
+    <div id="account-settings" class="tab-section active">
+        <div class="card border-0 shadow-sm rounded-3 mb-5">
+            <div class="card-header bg-white py-4 px-4 border-bottom-0">
+                <h4 class="mb-0 theme-heading">Account Details</h4>
+            </div>
+            <div class="card-body px-4 pb-4 pt-0">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_profile">
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted text-uppercase">First Name</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Last Name</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Email Address</label>
+                        <div class="d-flex align-items-center">
+                            <div id="email-display" class="form-control bg-light d-flex align-items-center justify-content-between">
+                                <span id="email-masked-text" class="text-muted">...</span>
+                                <a href="javascript:void(0)" onclick="toggleReveal('email')" class="text-decoration-none small fw-bold text-warning">Reveal</a>
+                            </div>
+                            <div id="email-edit" class="flex-grow-1 d-none">
+                                <input type="email" name="email" value="{{ user.email }}" class="form-control" placeholder="Enter new email">
+                            </div>
+                            <button type="button" class="btn btn-dark ms-2 btn-sm px-3" onclick="toggleEdit('email')">Edit</button>
+                            <input type="hidden" id="real-email" value="{{ user.email }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Phone Number</label>
+                        <div class="d-flex align-items-center">
+                            <div id="phone-display" class="form-control bg-light d-flex align-items-center justify-content-between">
+                                <span id="phone-masked-text" class="text-muted">...</span>
+                                <a href="javascript:void(0)" onclick="toggleReveal('phone')" class="text-decoration-none small fw-bold text-warning">Reveal</a>
+                            </div>
+                            <div id="phone-edit" class="flex-grow-1 d-none">
+                                {{ form.phone_number }}
+                            </div>
+                            <div class="d-flex ms-2 gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removePhone()">Remove</button>
+                                <button type="button" class="btn btn-dark btn-sm px-3" onclick="toggleEdit('phone')">Edit</button>
+                            </div>
+                            <input type="hidden" id="real-phone" value="{{ form.phone_number.value|default:'' }}">
+                        </div>
+                    </div>
+
+            {% if not is_admin %}
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-muted text-uppercase">Complete Address</label>
+    
+                    <textarea name="address" 
+                         class="form-control" 
+                         rows="3" 
+                         placeholder="House No., Street, Barangay, etc.">{{ form.address.value|default:'' }}</textarea>
+                </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                             <label class="form-label fw-bold small text-muted text-uppercase">City / Municipality</label>
+                             {{ form.city }}
+                        </div>
+                     <div class="col-md-6">
+                              <label class="form-label fw-bold small text-muted text-uppercase">Postal Code</label>
+          {{ form.postal_code }}
+            </div>
+        </div>
+            {% endif %}
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-theme px-4 py-2 fw-bold shadow-sm">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-3 mb-5">
+            <div class="card-header bg-white py-4 px-4 border-bottom-0">
+                <h5 class="mb-0 theme-heading">Security</h5>
+            </div>
+            <div class="card-body px-4 pb-4 pt-0">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Current Password</label>
+                            <input type="password" name="current_password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">New Password</label>
+                            <input type="password" name="new_password" class="form-control" placeholder="New password" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control" placeholder="Confirm password" required>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-theme px-4 py-2 fw-bold shadow-sm">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if not is_admin %}
+    <div id="my-orders" class="tab-section">
+        <div class="card border-0 shadow-sm rounded-3 mb-5">
+            <div class="card-header bg-white py-4 px-4 border-bottom-0">
+                <h4 class="mb-0 theme-heading">My Purchases</h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted small text-uppercase">Order #</th>
+                                <th class="text-muted small text-uppercase">Date</th>
+                                <th class="text-muted small text-uppercase">Amount</th>
+                                <th class="text-muted small text-uppercase">Status</th>
+                                <th class="text-end pe-4 text-muted small text-uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in my_orders %}
+                            <tr>
+                                <td class="ps-4 fw-bold">#{{ order.id }}</td>
+                                <td>{{ order.created|date:"M d, Y" }}</td>
+                                <td>₱{{ order.get_total_cost }}</td>
+                                <td>
+                                    {% if order.paid %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}
+                                </td>
+                                <td class="text-end pe-4"><a href="{% url 'order_success' order.id %}" class="btn btn-sm btn-outline-dark">View Details</a></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center py-5 text-muted">No purchases yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div id="seller-dashboard" class="tab-section">
+        
+        {% if profile.seller_status == 'APPROVED' or profile.seller_status == 'CANCELLATION_REQUESTED' %}
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="theme-heading mb-0">My Shop Dashboard</h4>
+                <div>
+                    {% if profile.seller_status == 'APPROVED' %}
+                        <button type="button" class="btn btn-outline-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#requestCancelModal">
+                            Request Stop Selling
+                        </button>
+                        <a href="{% url 'product_create' %}" class="btn btn-theme shadow-sm text-decoration-none">
+                            <i class="fas fa-plus me-2"></i> Add Product
+                        </a>
+                    {% else %}
+                        <button type="button" class="btn btn-secondary btn-sm disabled" disabled>Cancellation Pending</button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm p-3 text-center bg-white h-100">
+                        <h3 class="fw-bold theme-text mb-0">{{ seller_stats.products }}</h3>
+                        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Active Products</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm p-3 text-center bg-white h-100">
+                        <h3 class="fw-bold theme-text mb-0">{{ seller_stats.orders }}</h3>
+                        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Total Orders</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm p-3 text-center bg-white h-100">
+                        <h3 class="fw-bold theme-text mb-0">₱{{ seller_stats.revenue|floatformat:2 }}</h3>
+                        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Total Revenue</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                    <ul class="nav nav-pills" id="sellerInnerTab" role="tablist">
+                        <li class="nav-item me-2">
+                            <button class="nav-link active fw-bold btn-theme-outline" id="sp-tab" data-bs-toggle="tab" data-bs-target="#seller-products" type="button">My Products</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link fw-bold btn-theme-outline" id="so-tab" data-bs-toggle="tab" data-bs-target="#seller-orders" type="button">Received Orders</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body px-0">
+                    <div class="tab-content" id="sellerInnerTabContent">
+                        <div class="tab-pane fade show active" id="seller-products">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light"><tr><th class="ps-4">Product</th><th>Price</th><th>Stock</th><th class="text-end pe-4">Actions</th></tr></thead>
+                                    <tbody>
+                                        {% for product in seller_products %}
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    {% if product.image %}<img src="{{ product.image.url }}" class="rounded me-2" style="width: 35px; height: 35px; object-fit: cover;">{% endif %}
+                                                    <span class="fw-bold small">{{ product.name }}</span>
+                                                </div>
+                                            </td>
+                                            <td>₱{{ product.price }}</td>
+                                            <td>{{ product.stock }}</td>
+                                            <td class="text-end pe-4">
+                                                <a href="{% url 'product_update' product.pk %}" class="text-dark me-2"><i class="fas fa-edit"></i></a>
+                                                <a href="{% url 'product_delete' product.pk %}" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="4" class="text-center py-5 text-muted">No products yet.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="seller-orders">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light"><tr><th class="ps-4">Order ID</th><th>Date</th><th>Item</th><th>Buyer</th><th>Amount</th></tr></thead>
+                                    <tbody>
+                                        {% for order in seller_orders %}
+                                            {% for item in order.items.all %}
+                                                {% if item.product.created_by == user %}
+                                                <tr>
+                                                    <td class="ps-4">#{{ order.id }}</td>
+                                                    <td>{{ order.created|date:"M d" }}</td>
+                                                    <td>{{ item.product.name }} x{{ item.quantity }}</td>
+                                                    <td>{{ order.first_name }}</td>
+                                                    <td class="fw-bold">₱{{ item.get_cost }}</td>
+                                                </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% empty %}
+                                        <tr><td colspan="5" class="text-center py-5 text-muted">No orders received.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    </div>
+
+    <div id="seller-application" class="tab-section">
+        {% if profile.seller_status == 'PENDING' %}
+            <div class="card border-0 shadow-sm rounded-3 p-5 text-center bg-white" style="max-width: 600px; margin: 0 auto;">
+                <div class="text-warning mb-3"><i class="fas fa-clock fa-4x"></i></div>
+                <h3 class="theme-heading mb-3">Application Pending</h3>
+                <p class="text-muted">Your request to become a seller is currently under review by the Admin.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="modal fade" id="requestCancelModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-2 border-0 shadow">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold text-danger">Request to Stop Selling?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-muted">
+        You are sending a request to revert your account to a <strong>Customer</strong> account. Once approved, you lose dashboard access.
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light rounded-2" data-bs-dismiss="modal">Cancel</button>
+        <a href="{% url 'cancel_seller' %}" class="btn btn-danger rounded-2 text-decoration-none">Submit Request</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Init Toasts
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        var toastList = toastElList.map(function (toastEl) { return new bootstrap.Toast(toastEl, { delay: 3000 }); });
+        toastList.forEach(toast => toast.show());
+
+        // 1. TAB LOGIC (URL HASH)
+        function handleHashChange() {
+            const hash = window.location.hash || '#account-settings';
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+            const target = document.querySelector(hash);
+            if (target) {
+                target.classList.add('active');
+                const titleEl = document.getElementById('page-title');
+                if(hash === '#account-settings') titleEl.textContent = 'Account Settings';
+                else if(hash === '#my-orders') titleEl.textContent = 'My Purchases';
+                else if(hash === '#seller-dashboard') titleEl.textContent = 'Seller Dashboard';
+                else if(hash === '#seller-application') titleEl.textContent = 'Application Status';
+            }
+        }
+        handleHashChange();
+        window.addEventListener('hashchange', handleHashChange);
+
+        // 2. MASKING LOGIC (JS)
+        maskData();
+    });
+
+    function maskData() {
+        // Email
+        const realEmail = document.getElementById('real-email').value;
+        const emailDisplay = document.getElementById('email-masked-text');
+        if (realEmail && realEmail.includes('@')) {
+            let [user, domain] = realEmail.split('@');
+            if (user.length > 2) {
+                emailDisplay.textContent = user[0] + '***' + user[user.length-1] + '@' + domain;
+            } else {
+                emailDisplay.textContent = user + '@' + domain;
+            }
+        }
+
+        // Phone
+        const realPhone = document.getElementById('real-phone').value;
+        const phoneDisplay = document.getElementById('phone-masked-text');
+        if (realPhone && realPhone.length > 4) {
+            phoneDisplay.textContent = '******' + realPhone.slice(-4);
+        } else if (realPhone) {
+            phoneDisplay.textContent = realPhone;
+        } else {
+            phoneDisplay.textContent = 'No phone number set';
+        }
+    }
+
+    function toggleReveal(type) {
+        const displaySpan = document.getElementById(type + '-masked-text');
+        const realVal = document.getElementById('real-' + type).value;
+        const isMasked = displaySpan.textContent.includes('*');
+        
+        if (isMasked) {
+            displaySpan.textContent = realVal; 
+            if(event.target) event.target.textContent = "Hide";
+        } else {
+            maskData(); // Re-mask
+            if(event.target) event.target.textContent = "Reveal";
+        }
+    }
+
+    function toggleEdit(type) {
+        const displayDiv = document.getElementById(type + '-display');
+        const editDiv = document.getElementById(type + '-edit');
+        if (editDiv.classList.contains('d-none')) {
+            displayDiv.classList.add('d-none');
+            editDiv.classList.remove('d-none');
+        } else {
+            displayDiv.classList.remove('d-none');
+            editDiv.classList.add('d-none');
+        }
+    }
+
+    function removePhone() {
+        if(confirm("Remove phone number?")) {
+            const input = document.querySelector('input[name="phone_number"]');
+            if(input) { input.value = ''; alert("Phone number cleared. Click 'Save Changes' to persist."); }
+        }
+    }
+</script>
+
+<style>
+    /* Seller Tabs Override */
+    .nav-pills .nav-link { color: #555; background: #f8f9fa; margin-right: 5px; }
+    .nav-pills .nav-link.active { background-color: #ddaa55; color: white; }
+</style>
+{% endblock %}

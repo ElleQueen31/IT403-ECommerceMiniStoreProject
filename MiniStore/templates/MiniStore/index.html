@@ -1,0 +1,418 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Julynesha - Fashion & Accessories</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="{% static 'MiniStore/style.css' %}">
+        <link rel="icon" type="image/png" href="{% static 'MiniStore/favicon.png' %}">
+        <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+    </head>
+
+    <body>
+
+        <section id="header">
+            <a href="#" id="logo-link">
+                <img src="{% static 'MiniStore/TransLogo.png' %}" class="logo" alt="MiniStore Logo">
+            </a>
+
+            <div>
+                <ul id="navbar">
+                    <li><a class="active" href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'shop' %}">Shop</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                    <li><a href="{% url 'wishlist' %}"><i class="far fa-heart"></i></a></li>
+                    <li><a href="{% url 'cart' %}" class="cart-icon">
+                        <i class="fas fa-shopping-bag"></i><span class="cart-count">0</span>
+                    </a></li>
+                </ul>
+            </div>
+        </section>
+
+
+        <section id ="hero">
+            <h4>Trade-in-offer</h4>
+            <h2>Super value deals</h2>
+            <h1>On all products</h1>
+            <p>Save more with coupons & up to 70% off!</p>
+            <button>Shop Now</button></a>
+        </section>
+
+        <section id="feature" class="section-p1">
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f1.png' %}" alt="Free Shipping">
+                <h6>Free Shipping</h6>
+            </div>
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f2.png' %}" alt="Free Shipping">
+                <h6>Online Order</h6>
+            </div>
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f3.png' %}" alt="Free Shipping">
+                <h6>Save Money</h6>
+            </div>
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f4.png' %}" alt="Free Shipping">
+                <h6>Promotions</h6>
+            </div>
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f5.png' %}" alt="Free Shipping">
+                <h6>Happy Sell</h6>
+            </div>
+            <div class="fe-box">
+                <img src="{% static 'MiniStore/feature/f6.png' %}" alt="Free Shipping">
+                <h6>24/7 Support</h6>
+            </div>
+        </section>
+
+        <section id="product1" class="section-p1">
+            <h2>Featured Products</h2>
+            <p>New Arrival | Exclusive Modern Release</p>
+            <div class="pro-container">
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/dress/sage.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Elegant Plain Double Button Dress</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱474.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/dress/puff.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Casual Dress Plain Fake Pocket Bow Contrast Collar Puff Sleeve Dress</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱486.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/dress/white.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Casual Plain Fabric Texture Dress</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱420.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/bags/bag1.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Casual Large Capacity Shoulder Tote Bag</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱270.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/bags/bag2.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Casual Plain Practical Multiple Zippers Small Shoulder Bag</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱351.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/bags/bag3.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Elegant Plain Commuting Shoulder Tote Bag for Women</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱344.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                    <div class="pro">
+                    <img src="{% static 'MiniStore/products/perf/perfume2.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>O.TWO.O</span>
+                        <h5>O.TWO.O Perfume Long Lasting 12H Aromatic Oriental Lavender Orange Cedar Ambergris 50ML</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱321.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/perf/perfume3.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Andrea Secret</span>
+                        <h5>Andrea Secret Heavenly Whiff 100ML | Women's Limited EditionPerfume</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱289.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="banner" class="section-m1">
+            <h4>Repair Services </h4>
+            <h2>Up to <span>70% Off</span>All Clothes and Accessories</h2>
+            <button class="normal">Explore More</button>
+        </section>
+
+        <section id="product1" class="section-p1">
+            <h2>New Arrivals</h2>
+            <p>New Arrival | Exclusive Modern Release</p>
+            <div class="pro-container">
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/shoes/shoe1.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Corolla</span>
+                        <h5>COROLLA Soft PU Material Lightweight korean sapatos Unisex White Rubber School shoes</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱654.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/shoes/shoe3.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Corolla</span>
+                        <h5>COROLLA Women's White Casual School Sneakers - Comfortable Korean Style Thick Bottom Shoes Ideal for Daily Wear</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱676.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/shoes/shoe2.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Corolla</span>
+                        <h5>COROLLA korean fashion Unisex Non-Slip Rubber Sneakers - Black Shoes Lightweight For School Sapatos</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱654.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/ha/HA2.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Casual Hair Ties Plain Basic Hair Ties</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱140.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/ha/HA1.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Women Cute Hair Clips Floral Bow Jewelled Hair Clips</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱112.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/ha/HA3.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Lovito</span>
+                        <h5>Lovito Casual Plain Pearls Hair Clips for Women</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱93.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                    <div class="pro">
+                    <img src="{% static 'MiniStore/products/jewel/jewel2.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Mikana</span>
+                        <h5>Mikana 18k Gold Plated Hayame Pendant Necklace Accessories Jewelry For Women Jewelries Choker</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱251.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+                <div class="pro">
+                    <img src="{% static 'MiniStore/products/jewel/jewel1.png' %}" alt="Product 1">
+                    <div class="des">
+                        <span>Mikana</span>
+                        <h5>Mikana Valentines LoveStone 18k Gold Plated Projector Pendant Necklace Collection Accessories Women</h5>
+                        <div class="star">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <h4>₱298.00</h4>
+                    </div>
+                    <a href="#"><i class="fal fa-shopping-cart cart"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <section id="sm-banner" class="section-p1">
+            <div class="banner-box1">
+                <span>Shoulder Bag</span>
+                <h2>Effortless</h2>
+                <h2>Elegance</h2>
+                <button class="normal">Shop now</button>
+            </div>
+            <div class="banner-box">
+                <span>Perfume</span>
+                <h2>Buy One</h2>
+                <h2>Get One Free</h2>
+                <button class="normal">Shop now</button>
+            </div>
+            <div class="banner-box2">
+                <span>Corolla</span>
+                <h2>20% Off</h2>
+                <h2>Sneakers</h2>
+                <button class="normal">Shop now</button>
+            </div>
+        </section>
+
+        <footer class="section-p1">
+            <div class="col">
+                <img class="logo" src="{% static 'MiniStore/TransLogo.png' %}" alt="MiniStore Logo">
+                <h4>Contact</h4>
+                <p><strong>Address:</strong> 123 Fashion St, Style City, Country</p>
+                <p><strong>Phone:</strong> +123 456 7890</p>
+                <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
+                <div class="follow">
+                    <h4>Follow us</h4>
+                    <div class="icon">
+                        <i class="fab fa-facebook-f"></i>
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-pinterest-p"></i>
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <h4>About</h4>
+                <a href="#">About Us</a>
+                <a href="#">Delivery Information</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="col">
+                <h4>My Account</h4>
+                <a href="#">Sign In</a>
+                <a href="#">View Cart</a>
+                <a href="#">My Wishlist</a>
+                <a href="#">Track My Order</a>
+                <a href="#">Help</a>
+            </div>
+            <div class="col install">
+                <h4>Install App</h4>
+                <p>From App Store or Google Play</p>
+                <div class="row">
+                    <img src="{% static 'MiniStore/pay/app.jpg' %}" alt="App Store">
+                    <img src="{% static 'MiniStore/pay/play.jpg' %}" alt="Google Play">
+                </div>
+                <p>Secured Payment Gateways</p>
+                <img src="{% static 'MiniStore/pay/pay.png' %}" alt="Payment Methods">
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025, WST3 - Julynesha Fashion & Accessories | Final Project</p>
+                
+        <script src="{% static 'MiniStore/script.js' %}"></script>
+    </body>
+</html>

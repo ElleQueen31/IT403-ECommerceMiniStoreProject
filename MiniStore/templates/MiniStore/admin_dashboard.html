@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard | Julynesha{% endblock %}
+
+{% block content %}
+<div class="container my-5" style="min-height: 80vh;">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm rounded-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold theme-heading mb-0">Admin Dashboard</h2>
+            <span class="text-muted small">Store Overview & User Management</span>
+        </div>
+        <div class="text-end"><span class="badge bg-dark text-white p-2 rounded-2">Admin Access</span></div>
+    </div>
+    
+    <div class="row g-3 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-3 border-0 shadow-sm text-center rounded-3 h-100 bg-light"> 
+                <h2 class="fw-bold mb-0 theme-heading">{{ total_products }}</h2> 
+                <p class="text-muted small text-uppercase fw-bold mb-0" style="font-size: 0.7rem;">Products</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-3 border-0 shadow-sm text-center rounded-3 h-100 bg-light"> 
+                <h2 class="fw-bold mb-0 theme-heading">{{ total_orders }}</h2> 
+                <p class="text-muted small text-uppercase fw-bold mb-0" style="font-size: 0.7rem;">Total Orders</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-3 border-0 shadow-sm text-center rounded-3 h-100" style="background-color: #f0fdf4;"> 
+                <h2 class="fw-bold mb-0 theme-heading text-success">{{ total_sellers }}</h2> 
+                <p class="text-success small text-uppercase fw-bold mb-0" style="font-size: 0.7rem;">Verified Sellers</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-3 border-0 shadow-sm text-center rounded-3 h-100" style="background-color: #f9f5f0;"> 
+                <h2 class="fw-bold mb-0 theme-heading">{{ total_customers }}</h2> 
+                <p class="text-muted small text-uppercase fw-bold mb-0" style="font-size: 0.7rem;">Customers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-white border-bottom pt-4 px-4">
+            <h5 class="mb-0 fw-bold theme-heading">User Management</h5>
+            <p class="text-muted small mb-2">Directory of all customers and sellers.</p>
+        </div>
+        
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr class="text-uppercase small text-muted">
+                            <th class="ps-4 py-3 border-0">User Info</th>
+                            <th class="border-0">Status / Role</th>
+                            <th class="border-0 text-center">Stats</th>
+                            <th class="border-0">Contact</th>
+                            <th class="text-end pe-4 border-0">Management</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_obj in all_users %}
+                        <tr class="{% if user_obj.profile.seller_status == 'PENDING' %}bg-warning bg-opacity-10{% elif user_obj.profile.seller_status == 'CANCELLATION_REQUESTED' %}bg-danger bg-opacity-10{% endif %}">
+                            
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center me-3 border" 
+                                         style="width: 40px; height: 40px; font-weight: bold;">
+                                        {{ user_obj.username|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold text-dark">{{ user_obj.username }}</span>
+                                        <span class="small text-muted">Joined: {{ user_obj.date_joined|date:"M Y" }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if user_obj.profile.seller_status == 'PENDING' %}
+                                    <span class="badge bg-warning text-dark border border-warning"><i class="fas fa-clock me-1"></i> PENDING APPROVAL</span>
+                                {% elif user_obj.profile.seller_status == 'CANCELLATION_REQUESTED' %}
+                                    <span class="badge bg-danger text-white border border-danger"><i class="fas fa-exclamation-circle me-1"></i> REQUESTING EXIT</span>
+                                {% elif user_obj.profile.role == 'SELLER' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3">SELLER</span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary rounded-pill px-3">CUSTOMER</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold">{{ user_obj.total_order_count }}</span>
+                                    <span class="small text-muted" style="font-size: 0.7rem;">Orders</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="small text-truncate" style="max-width: 150px;">{{ user_obj.email }}</div>
+                                {% if user_obj.profile.phone_number %}<div class="small text-muted">{{ user_obj.profile.phone_number }}</div>{% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+                                {% if user_obj.profile.seller_status == 'PENDING' %}
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <a href="{% url 'approve_seller' user_obj.id %}" class="btn btn-dark btn-sm rounded-2" title="Approve"><i class="fas fa-check"></i></a>
+                                        <a href="{% url 'deny_seller' user_obj.id %}" class="btn btn-outline-danger btn-sm rounded-2" onclick="return confirm('Reject application?')"><i class="fas fa-times"></i></a>
+                                    </div>
+                                {% elif user_obj.profile.seller_status == 'CANCELLATION_REQUESTED' %}
+                                    <a href="{% url 'approve_cancellation' user_obj.id %}" class="btn btn-danger btn-sm rounded-2 w-100" onclick="return confirm('Confirm removal?')">Confirm Removal</a>
+                                {% elif user_obj.profile.role == 'SELLER' %}
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-2" type="button" data-bs-toggle="dropdown">Actions</button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                            <li><a class="dropdown-item text-danger" href="{% url 'revoke_seller' user_obj.id %}" onclick="return confirm('Revoke seller access?')">Revoke Access</a></li>
+                                        </ul>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small fst-italic">No actions</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not all_users %}
+                <div class="text-center py-5"><p class="text-muted">No users found.</p></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .theme-heading { font-family: 'Playfair Display', serif; color: #1a1a1a; }
+    .table-hover tbody tr:hover { background-color: #fdfbf9; }
+</style>
+{% endblock %}

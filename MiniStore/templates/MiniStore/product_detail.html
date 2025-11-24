@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Julynesha{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- THEME VARIABLES --- */
+    :root {
+        --theme-gold: #ddaa55;
+        --theme-gold-dark: #c29448;
+        --text-dark: #1a1a1a;
+        --text-grey: #465b52;
+        --border-color: #e1e1e1;
+    }
+
+    /* --- PRODUCT DETAIL CONTAINER --- */
+    #prodetails {
+        display: flex;
+        margin-top: 40px;
+        padding: 40px 80px;
+        gap: 50px;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    /* --- IMAGE COLUMN --- */
+    .single-pro-image {
+        width: 40%;
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .main-img {
+        width: 100%;
+        border-radius: 15px;
+        object-fit: cover;
+        max-height: 600px; 
+    }
+
+    /* --- TEXT DETAILS COLUMN --- */
+    .single-pro-details {
+        width: 50%;
+        padding-top: 10px;
+    }
+
+    .single-pro-details h6 {
+        font-size: 14px;
+        color: #888;
+        margin-bottom: 20px;
+    }
+
+    .single-pro-details h4 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+        line-height: 1.2;
+    }
+
+    .single-pro-details h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--theme-gold);
+        margin-bottom: 25px;
+    }
+
+    /* Inputs & Selects */
+    .single-pro-details select {
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        outline: none;
+        font-size: 14px;
+        color: var(--text-dark);
+        width: 100%;
+        max-width: 200px;
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+    .single-pro-details input[type="number"] {
+        width: 60px;
+        height: 47px;
+        padding-left: 10px;
+        font-size: 16px;
+        margin-right: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        outline: none;
+    }
+
+    /* Add To Cart Button */
+    .btn-add-cart {
+        background-color: var(--theme-gold);
+        color: #fff;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-add-cart:hover {
+        background-color: var(--theme-gold-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(221, 170, 85, 0.3);
+    }
+
+    /* --- COLLAPSIBLE DESCRIPTION DROPDOWN --- */
+    details.description-dropdown {
+        margin-top: 40px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    details.description-dropdown summary {
+        padding: 15px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--text-dark);
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fcfcfc;
+        transition: background 0.3s;
+    }
+
+    details.description-dropdown summary:hover {
+        background-color: #f5f5f5;
+    }
+
+    /* Custom Arrow Icon */
+    details.description-dropdown summary::after {
+        content: '\f078'; /* FontAwesome chevron-down */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        transition: transform 0.3s;
+        font-size: 12px;
+        color: #888;
+    }
+
+    details[open].description-dropdown summary::after {
+        transform: rotate(180deg);
+    }
+
+    /* Remove default marker in Webkit */
+    details.description-dropdown summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .details-content {
+        padding: 20px;
+        line-height: 1.6;
+        color: var(--text-grey);
+        font-size: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 799px) {
+        #prodetails {
+            flex-direction: column;
+            padding: 30px 20px;
+        }
+        
+        .single-pro-image {
+            width: 100%;
+        }
+
+        .single-pro-details {
+            width: 100%;
+        }
+    }
+</style>
+
+<section id="prodetails">
+    
+    <div class="single-pro-image">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="main-img" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'MiniStore/products/dress/sage.png' %}" class="main-img" alt="Default Image">
+        {% endif %}
+    </div>
+
+    <div class="single-pro-details">
+        <h6>Home / Shop / {{ product.category.name|default:"Category" }}</h6>
+        <h4>{{ product.name }}</h4>
+        <h2>₱{{ product.price }}</h2>
+
+        {% with cat=product.category.slug|lower %}
+            
+            {% if cat == 'tops' or cat == 'dresses' %}
+                <select>
+                    <option>Select Size</option>
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                    <option>XL</option>
+                </select>
+            {% elif cat == 'footwear' %}
+                <select>
+                    <option>Select Size (EU)</option>
+                    <option>36</option>
+                    <option>37</option>
+                    <option>38</option>
+                    <option>39</option>
+                    <option>40</option>
+                    <option>41</option>
+                    <option>42</option>
+                    <option>43</option>
+                    <option>44</option>
+                    <option>45</option>
+                </select>
+            {% else %}
+                {% endif %}
+        {% endwith %}
+
+        <form method="post" action="{% url 'cart_add' product.id %}">
+            {% csrf_token %}
+            
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                
+                <input type="number" 
+                       name="quantity" 
+                       value="1" 
+                       min="1" 
+                       max="{{ product.stock|default:99 }}" 
+                       style="width: 60px; height: 47px; padding-left: 10px; font-size: 16px; margin-right: 10px;"/>
+                
+                <button type="submit" class="btn-add-cart">
+                    Add To Cart
+                </button>
+            </div>
+        </form>
+        
+
+        <details class="description-dropdown" open>
+            <summary>Product Details</summary>
+            <div class="details-content">
+                <span>
+                    {{ product.description|default:"No description available for this product yet."|linebreaks }}
+                </span>
+            </div>
+        </details>
+
+    </div>
+
+</section>
+
+{% endblock %}

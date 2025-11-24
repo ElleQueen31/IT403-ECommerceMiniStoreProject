@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Receipt for {{ order.first_name }} - Julynesha{% endblock %}
+
+{% block content %}
+<style>
+    /* RECEIPT THEME */
+    :root {
+        --theme-gold: #ddaa55; 
+        --theme-gold-dark: #c29448;
+        --text-dark: #1a1a1a;
+        --bg-grey: #f8f9fa;
+    }
+    
+    body { background-color: var(--bg-grey); }
+
+    .receipt-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .receipt-header {
+        text-align: center;
+        padding: 40px 20px 20px;
+        border-bottom: 1px dashed #eee;
+    }
+
+    .success-icon {
+        color: var(--theme-gold);
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .receipt-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+    }
+
+    /* Table Styling */
+    .table-custom thead th {
+        background-color: #fdf6e7; /* Light Gold/Cream */
+        color: var(--text-dark);
+        border-bottom: 2px solid var(--theme-gold);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .seller-badge {
+        background-color: #eee;
+        color: #555;
+        font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn-gold {
+        background-color: var(--theme-gold);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(221, 170, 85, 0.2);
+    }
+    .btn-gold:hover {
+        background-color: var(--theme-gold-dark);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-gold {
+        background-color: transparent;
+        color: var(--text-dark);
+        border: 2px solid #ddd;
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-outline-gold:hover {
+        border-color: var(--theme-gold);
+        color: var(--theme-gold);
+    }
+</style>
+
+<div class="container my-5">
+    <div class="card receipt-card" style="max-width: 900px; margin: 0 auto;">
+        
+        <div class="receipt-header">
+            <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+            <h3 class="receipt-title">
+                Receipt for {{ order.first_name }} {{ order.last_name }}
+            </h3>
+            <p class="text-muted small mb-0">Reference ID: #{{ order.id }}</p>
+        </div>
+
+        <div class="card-body p-5">
+            
+            <div class="row mb-5 g-4">
+                <div class="col-md-6">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem;">Customer Details</h6>
+                    <p class="mb-1 fw-bold fs-5 text-dark">{{ order.first_name }} {{ order.last_name }}</p>
+                    <p class="mb-1 text-muted">{{ order.email }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem;">Shipping Address</h6>
+                    <p class="mb-1 text-dark">{{ order.address }}</p>
+                    <p class="mb-1 text-dark">{{ order.city }}, {{ order.postal_code }}</p>
+                    <p class="mb-1 text-muted small mt-2">Date Ordered: {{ order.created|date:"F j, Y" }}</p>
+                </div>
+            </div>
+
+            <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem;">Order Summary</h6>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle table-custom">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="padding: 15px;">Product</th>
+                            <th scope="col">Seller</th>
+                            <th scope="col">Price</th>
+                            <th scope="col" class="text-center">Qty</th>
+                            <th scope="col" class="text-end" style="padding-right: 15px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td style="padding: 15px;">
+                                <span class="fw-bold text-dark">{{ item.product.name }}</span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill seller-badge px-3 py-2">
+                                    <i class="fas fa-store me-1"></i>
+                                    {% if item.product.created_by %}
+                                        {{ item.product.created_by.first_name|default:item.product.created_by.username }}
+                                    {% else %}
+                                        Julynesha Shop
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>₱{{ item.price }}</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end fw-bold text-dark" style="padding-right: 15px;">₱{{ item.get_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot style="border-top: 2px solid #eee;">
+                        <tr>
+                            <td colspan="4" class="text-end fw-bold fs-5 pt-4">Total Payment:</td>
+                            <td class="text-end fw-bold fs-4 pt-4" style="color: var(--theme-gold); padding-right: 15px;">₱{{ order.get_total_cost }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="text-center mt-5 d-flex justify-content-center gap-3">
+                <a href="{% url 'cart_detail' %}" class="btn btn-outline-gold">
+                    <i class="fas fa-shopping-cart me-2"></i> Back to Cart
+                </a>
+                
+                <a href="{% url 'shop' %}" class="btn btn-gold">
+                    <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
+                </a>
+            </div>
+
+            <p class="text-muted small text-center mt-4 mb-0">Thank you for shopping with Julynesha!</p>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

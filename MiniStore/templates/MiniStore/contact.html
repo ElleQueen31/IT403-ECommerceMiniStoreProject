@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact Us - Julynesha Fashion & Accessories{% endblock %}
+
+{% block content %}
+
+<style>
+    /* 1. Main Header Styling (Full Width) */
+    .contact-header-section {
+        text-align: center;
+        padding: 50px 0;
+        background-color: var(--bg); /* Use your pale greige background */
+    }
+    .contact-header-section h1 {
+        font-size: 44px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+    /* 2. Main Content Area */
+    .contact-content-area {
+        max-width: 900px;
+        margin: 50px auto 100px auto; 
+        padding: 0 20px; 
+        text-align: center;
+    }
+    .contact-section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark_gold);
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--light);
+        padding-bottom: 5px;
+    }
+    .contact-info-block {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 30px;
+    }
+    .contact-info-item {
+        flex: 1;
+        min-width: 250px;
+        text-align: center;
+        padding: 20px;
+        border: 1px solid var(--light);
+        border-radius: 5px;
+    }
+    .contact-info-item i {
+        font-size: 24px;
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+    .contact-info-item h4 {
+        font-size: 18px;
+        color: var(--dark);
+        margin-bottom: 5px;
+    }
+    .contact-info-item p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+    }
+    
+</style>
+
+<section class="contact-header-section">
+    <h1>Contact Us</h1>
+</section>
+
+<div class="contact-content-area">
+
+    <p style="font-size: 16px; line-height: 1.8; color: #444; margin-bottom: 40px;">
+        We are here to assist you with inquiries related to your purchases, our platform, or becoming a valued Seller in the E-Commerce Mini Store. Please use the appropriate channel below.
+    </p>
+
+    <h3 class="contact-section-title">Reach Our Support Team</h3>
+
+    <div class="contact-info-block">
+        
+        <div class="contact-info-item">
+            <i class="fas fa-headset"></i>
+            <h4>Customer Service</h4>
+            <p>Email: support@julynesha.com</p>
+            <p>Phone: (+63) 9XX-XXX-XXXX</p>
+            <p style="color: var(--accent);">*For orders, returns, and general product inquiries.</p>
+        </div>
+
+        <div class="contact-info-item">
+            <i class="fas fa-handshake"></i>
+            <h4>Seller & Partnership Inquiries</h4>
+            <p>Email: partnerships@julynesha.com</p>
+            <p>Contact: [Project Leader Name]</p>
+            <p style="color: var(--accent);">*For support related to the Seller dashboard or joining the platform.</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--light);">
+        <h4 style="color: var(--dark_gold); margin-bottom: 10px;">Project Headquarters</h4>
+        <p style="font-size: 14px; color: #888;">Bulacan State University, College of Information and Communication Technology</p>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Shopping Cart - Julynesha{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- THEME COLORS --- */
+    :root {
+        --theme-gold: #ddaa55;
+        --theme-gold-dark: #c29448;
+        --text-dark: #1a1a1a;
+        --bg-grey: #f8f9fa;
+        --white: #ffffff;
+    }
+
+    body { background-color: var(--bg-grey); }
+
+    .cart-wrapper {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+        min-height: 60vh;
+    }
+
+    .cart-header { text-align: center; margin-bottom: 40px; }
+    .cart-header h1 { font-size: 2.5rem; color: var(--text-dark); font-weight: 700; font-family: 'Playfair Display', serif; }
+
+    /* Grid Layout */
+    .cart-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        align-items: start; /* Ensures sticky summary works */
+    }
+    @media (min-width: 992px) {
+        .cart-grid { grid-template-columns: 2fr 1fr; }
+    }
+
+    .cart-items-box {
+        background-color: var(--white);
+        /* Padding removed here to allow scrollbar to hit edges, added to children instead */
+        padding: 0; 
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        overflow: hidden; /* Keeps border radius with scroll */
+    }
+
+    /* Fixed Header inside Box */
+    .cart-box-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        z-index: 10;
+        position: relative;
+    }
+
+    /* --- NEW: SCROLLABLE AREA --- */
+    .cart-scroll-items {
+        max-height: 60vh; /* Adjust height limit here */
+        overflow-y: auto;
+        padding: 25px;
+        /* Custom Scrollbar for Chrome/Safari/Edge */
+        scrollbar-width: thin;
+        scrollbar-color: var(--theme-gold) #f1f1f1;
+    }
+    
+    .cart-scroll-items::-webkit-scrollbar {
+        width: 8px;
+    }
+    .cart-scroll-items::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    .cart-scroll-items::-webkit-scrollbar-thumb {
+        background-color: var(--theme-gold);
+        border-radius: 20px;
+        border: 3px solid #f1f1f1;
+    }
+
+    /* UPDATED GRID FOR CHECKBOX */
+    .cart-row {
+        display: grid;
+        /* Checkbox | Image | Details | Price | Qty | Remove */
+        grid-template-columns: 30px 100px 2fr 1fr 1fr auto;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .cart-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .cart-img-container {
+        width: 100px; height: 100px;
+        background-color: #fdf6e7;
+        border-radius: 10px; overflow: hidden;
+        flex-shrink: 0;
+    }
+    .cart-img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+    .item-meta h3 { font-size: 1.1rem; margin-bottom: 5px; color: var(--text-dark); font-weight: 700; }
+    .item-meta span { font-size: 0.9rem; color: #777; }
+
+    .price-display { font-weight: 600; color: var(--text-dark); }
+
+    /* Checkbox Styles */
+    .item-checkbox {
+        width: 18px; height: 18px; accent-color: var(--theme-gold); cursor: pointer;
+    }
+
+    /* Qty Input */
+    .qty-display input[type=number] {
+        width: 60px; padding: 8px 5px; border: 1px solid #ddd; border-radius: 5px;
+        font-size: 16px; color: var(--text-dark); text-align: center;
+    }
+
+    .btn-remove {
+        background: none; border: none; color: #e74c3c; cursor: pointer;
+        font-size: 0.9rem; font-weight: 600; transition: 0.2s;
+    }
+    .btn-remove:hover { color: #c0392b; text-decoration: underline; }
+
+    /* Cart Summary */
+    .cart-summary {
+        background-color: var(--white);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        height: fit-content;
+        /* --- STICKY POSITIONING --- */
+        position: -webkit-sticky;
+        position: sticky;
+        top: 30px; 
+    }
+    .cart-summary h2 {
+        font-size: 1.5rem; margin-bottom: 20px;
+        border-bottom: 3px solid var(--theme-gold);
+        padding-bottom: 10px; display: inline-block;
+        color: var(--text-dark);
+        font-family: 'Playfair Display', serif;
+    }
+    .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+    .summary-table td { padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; }
+    .summary-table tr:last-child td { border-bottom: none; }
+    .summary-label { color: #555; }
+    .summary-val { text-align: right; font-weight: 600; }
+    .total-row td { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); padding-top: 20px; }
+
+    .btn-checkout {
+        display: block; width: 100%; padding: 15px;
+        background-color: var(--theme-gold); color: #fff;
+        border: none; border-radius: 30px;
+        font-size: 1.1rem; font-weight: 700;
+        cursor: pointer; transition: all 0.3s ease;
+        text-align: center; text-decoration: none;
+        box-shadow: 0 5px 15px rgba(221, 170, 85, 0.2);
+    }
+    .btn-checkout:hover:not(:disabled) { background-color: var(--theme-gold-dark); transform: translateY(-2px); }
+    
+    /* --- DISABLED BUTTON STYLE --- */
+    .btn-checkout:disabled {
+        background-color: #e0e0e0;
+        color: #a0a0a0;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    /* --- UPDATED LINK STYLE (To match Back to Cart) --- */
+    .link-continue {
+        display: block;
+        text-align: center;
+        margin: 20px auto;
+        color: #777; /* Muted Grey */
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    .link-continue:hover {
+        color: var(--theme-gold); /* Gold on Hover */
+        text-decoration: underline;
+    }
+
+    .empty-cart-msg {
+        text-align: center; padding: 50px;
+        background: white; border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+
+    @media (max-width: 768px) {
+        .cart-row { grid-template-columns: 30px 80px 1fr; gap: 10px; }
+        .cart-img-container { grid-row: 1 / 3; grid-column: 2; }
+        .item-meta, .price-display, .qty-display, .remove-col { grid-column: 3; }
+        .cart-grid { display: block; }
+        .cart-summary { margin-top: 30px; position: static; }
+    }
+</style>
+
+<div class="cart-wrapper">
+    <div class="cart-header"><h1>My Shopping Cart</h1></div>
+
+    {% if cart_items %}
+    <div class="cart-grid">
+        
+        <form id="checkout-form" action="{% url 'proceed_to_checkout' %}" method="POST" style="display: contents;">
+            {% csrf_token %}
+            
+            <section class="cart-items-box">
+                
+                <div class="cart-box-header">
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" id="select-all" class="item-checkbox" checked style="margin-right: 10px;">
+                        <label for="select-all" style="font-weight: 600; cursor: pointer;">Select All Items</label>
+                    </div>
+                </div>
+
+                <div class="cart-scroll-items">
+                    {% for item in cart_items %}
+                    <article class="cart-row">
+                        
+                        <div style="display: flex; justify-content: center;">
+                            <input type="checkbox" 
+                                   name="selected_items" 
+                                   value="{{ item.product.id }}" 
+                                   class="item-checkbox individual-select" 
+                                   checked>
+                        </div>
+
+                        <div class="cart-img-container">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                                <img src="{% static 'MiniStore/products/dress/sage.png' %}" alt="Default Image">
+                            {% endif %}
+                        </div>
+
+                        <div class="item-meta">
+                            <h3>{{ item.product.name }}</h3>
+                            <span>{{ item.product.category.name|default:"General" }}</span>
+                        </div>
+
+                        <div class="price-display">
+                            ₱<span id="item-total-{{ item.product.id }}" class="item-price-text">{{ item.item_total }}</span>
+                        </div>
+
+                        <div class="qty-display">
+                            <input type="number" 
+                                   class="qty-input-ajax"
+                                   value="{{ item.quantity }}" 
+                                   min="1"
+                                   data-url="{% url 'cart_update' item.product.id %}">
+                        </div>
+
+                        <div class="remove-col">
+                             <button type="button" 
+                                     class="btn-remove ajax-remove-btn"
+                                     data-url="{% url 'cart_remove' item.product.id %}">
+                                 <i class="fas fa-trash-alt"></i> Remove
+                             </button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                    
+                    <a href="{% url 'shop' %}" class="link-continue">
+                        <i class="fas fa-chevron-left me-1"></i> Continue Shopping
+                    </a>
+                </div>
+            </section>
+        </form>
+
+        <aside class="cart-summary">
+            <h2>Cart Totals</h2>
+            <table class="summary-table">
+                <tr>
+                    <td class="summary-label">Subtotal</td>
+                    <td class="summary-val">₱<span id="cart-subtotal">{{ total }}</span></td>
+                </tr>
+                <tr>
+                    <td class="summary-label">Shipping</td>
+                    <td class="summary-val">Free</td>
+                </tr>
+                <tr class="total-row">
+                    <td class="summary-label">Total Payment</td>
+                    <td class="summary-val">₱<span id="cart-total">{{ total }}</span></td>
+                </tr>
+            </table>
+            
+            <button type="submit" form="checkout-form" id="checkout-btn" class="btn-checkout">Checkout Now</button>
+        </aside>
+
+    </div>
+    
+    {% else %}
+    <div class="empty-cart-msg">
+        <i class="fas fa-shopping-basket" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+        <h3 style="margin-bottom: 10px;">Your cart is currently empty.</h3>
+        <p style="color: #777; margin-bottom: 30px;">Looks like you haven't added anything yet.</p>
+        <a href="{% url 'shop' %}" class="btn-checkout" style="max-width: 200px; margin: 0 auto;">Go to Shop</a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.individual-select');
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const totalEl = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    // --- FUNCTION TO RECALCULATE & TOGGLE BUTTON ---
+    function recalculateTotal() {
+        let total = 0;
+        let checkedCount = 0;
+
+        checkboxes.forEach(box => {
+            if (box.checked) {
+                checkedCount++;
+                const row = box.closest('.cart-row');
+                const priceText = row.querySelector('.item-price-text').textContent;
+                const price = parseFloat(priceText.replace(/[^0-9.-]+/g,""));
+                total += price;
+            }
+        });
+
+        const formatted = total.toFixed(2);
+        subtotalEl.textContent = formatted;
+        totalEl.textContent = formatted;
+
+        // Toggle Button State
+        if (checkedCount > 0) {
+            checkoutBtn.disabled = false;
+        } else {
+            checkoutBtn.disabled = true;
+        }
+    }
+
+    if(selectAll) {
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(box => {
+                box.checked = selectAll.checked;
+            });
+            recalculateTotal();
+        });
+    }
+
+    checkboxes.forEach(box => {
+        box.addEventListener('change', function() {
+            if(!this.checked) selectAll.checked = false;
+            if(document.querySelectorAll('.individual-select:checked').length === checkboxes.length) {
+                selectAll.checked = true;
+            }
+            recalculateTotal();
+        });
+    });
+
+    // Run once on load to set initial button state
+    recalculateTotal();
+
+    // --- AJAX LOGIC REMAINED THE SAME ---
+    const qtyInputs = document.querySelectorAll('.qty-input-ajax');
+    qtyInputs.forEach(input => {
+        input.addEventListener('change', function(e) {
+            const url = this.dataset.url;
+            const newQuantity = this.value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const formData = new FormData();
+            formData.append('quantity', newQuantity);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrfToken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    const row = this.closest('.cart-row');
+                    const priceSpan = row.querySelector('.item-price-text');
+                    if(priceSpan) priceSpan.textContent = data.item_total;
+                    
+                    const badge = document.getElementById('cart-count-badge');
+                    if(badge) {
+                        badge.textContent = data.cart_count;
+                        if(data.cart_count > 0) badge.style.display = 'block';
+                    }
+                    recalculateTotal();
+                }
+            });
+        });
+    });
+
+    const removeBtns = document.querySelectorAll('.ajax-remove-btn');
+    removeBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrfToken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %}

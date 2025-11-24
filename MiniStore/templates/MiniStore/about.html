@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - Julynesha Co.{% endblock %}
+
+{% block content %}
+
+<style>
+    /* 1. Main Header Styling (Full Width) */
+    .about-header-section {
+        text-align: center;
+        padding: 50px 0;
+        background-color: var(--bg); /* Use your pale greige background */
+    }
+    .about-header-section h1 {
+        font-size: 44px;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    /* 2. Main Content Area (Two Columns) */
+    .about-content-area {
+        max-width: 1200px; /* Wider container for the two-column layout */
+        margin: 50px auto 100px auto; 
+        padding: 0 40px; 
+        display: flex; /* Enable Flexbox for side-by-side content */
+        align-items: flex-start; /* Align content to the top */
+        gap: 40px; /* Space between the logo and text */
+    }
+
+    /* 3. Logo Column Styling */
+    .logo-column {
+        flex: 0 0 35%; /* Fixed width for the logo column */
+        max-width: 35%;
+        padding-top: 20px;
+        text-align: center;
+    }
+    .logo-column img {
+        width: 100%;
+        height: auto;
+    }
+
+    /* 4. Text Column Styling */
+    .text-column {
+        flex: 1; /* Takes up the remaining space */
+        padding: 0;
+    }
+    .project-mandate-p {
+        font-size: 16px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+        color: #444;
+        text-align: left; /* Text alignment on the right side */
+    }
+    .project-info-box {
+        margin-top: 30px;
+        margin-bottom: 20px;
+        text-align: left; /* Align headers to the left of the text column */
+    }
+    .project-info-box h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--dark_gold);
+        margin-bottom: 5px;
+    }
+    .project-info-box h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 30px;
+    }
+    .team-list-item {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+        text-align: left; /* Align role list to the left */
+        margin-left: -60;
+        padding-left: 0;
+    }
+</style>
+
+
+<section class="about-header-section">
+    <h1>About Us</h1>
+</section>
+
+<div class="about-content-area">
+
+    <div class="logo-column">
+        <img src="{% static 'MiniStore/logo.png' %}" alt="Julynesha Co. Logo">
+    </div>
+
+    <div class="text-column">
+        
+        <p class="project-mandate-p">
+        This project was developed by our group as a major requirement for IT 403 WMAD - Elective 5 (WST 3) at Bulacan State University
+        Our goal was to design, build, and present a fully functional Django-based web application. The system features role-based access
+        control with three primary user types: Admin, Seller, and Customer. Its core functionalities include product management (CRUD 
+        operations), cart handling using sessions, order summaries, and inventory updates. The application is built with multiple interconnected 
+        models (at least 3–4) and uses Django ORM for all database interactions. It also incorporates a responsive user interface, template
+        inheritance, form validation, and complete user authentication—covering signup, login, and logout processes.
+    </p>
+
+    <div class="project-info-box">
+        <h3>BSIT 4D-G2 | FINAL PROJECT - IT 402 WST3</h3>
+        <h2 style="color: var(--dark_gold);">E-Commerce Mini Store</h2>
+    </div>
+
+    <div style="max-width: 400px; margin: 0 auto; text-align: center;">
+        <p class="team-list-item">Backend Developer | Ashley Jamaica Garcia</p>
+        <p class="team-list-item">Frontend Developer | Reina Janelle Bautista</p>
+        <p class="team-list-item">Database Manager | Ynez Yzabel Sanchez</p>
+        <p class="team-list-item">Documentor/Tester | Juliana Mae Castor</p>
+    </div>
+
+    </div>
+</div>
+{% endblock %}

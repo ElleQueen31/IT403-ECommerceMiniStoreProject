@@ -1,0 +1,9 @@
+
+from django.apps import AppConfig
+
+class MinistoreConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'MiniStore'
+
+    def ready(self):
+        import MiniStore.signals 

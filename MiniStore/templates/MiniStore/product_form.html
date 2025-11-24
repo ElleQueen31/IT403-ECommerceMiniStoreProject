@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Add/Edit Product - Julynesha{% endblock %}
+
+{% block content %}
+<style>
+    /* Page specific styles to match your dashboard */
+    .form-container {
+        max-width: 800px;
+        margin: 50px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    h2.page-title {
+        font-family: 'League Spartan', sans-serif;
+        font-size: 28px;
+        color: #2a2a2a;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #f9f6f0;
+        padding-bottom: 15px;
+    }
+
+    /* Form Field Styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    /* Styling Django's rendered form inputs */
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        background-color: #fcfcfc;
+        transition: 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: #ddaa55; /* Your Gold Accent */
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(221, 170, 85, 0.1);
+    }
+
+    /* File Upload Styling */
+    input[type="file"] {
+        padding: 10px;
+        background: #f9f6f0;
+        border-radius: 10px;
+    }
+
+    .btn-submit {
+        background-color: #ddaa55;
+        color: white;
+        padding: 14px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 16px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        background-color: #c59545;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background-color: transparent;
+        color: #888;
+        padding: 14px 30px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        margin-left: 10px;
+        transition: 0.3s;
+    }
+
+    .btn-cancel:hover {
+        color: #555;
+    }
+    
+    .helptext {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+        display: block;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="page-title">
+        {% if object %}Edit Product{% else %}Add New Product{% endif %}
+    </h2>
+
+    <!-- specific enctype is required for image uploads -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- 
+          If you are using standard Django forms ({{ form.as_p }}), 
+          you can just use {{ form.as_p }} here. 
+          
+          However, for better control, I recommend looping like this: 
+        -->
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <span class="helptext">{{ field.help_text }}</span>
+                {% endif %}
+                {% if field.errors %}
+                    <div style="color: #c62828; font-size: 13px; margin-top: 5px;">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn-submit">
+                {% if object %}Save Changes{% else %}Add Product{% endif %}
+            </button>
+            <a href="{% url 'seller_dashboard' %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

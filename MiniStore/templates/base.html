@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Julynesha - Fashion & Accessories{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'MiniStore/style.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'MiniStore/favicon.png' %}">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+
+    <style>
+        /* --- HEADER COLOR --- */
+        #header {
+            background-color: #E9D8C8; 
+            border-right: 1px solid #dfc8b6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        /* --- GENERAL STYLES --- */
+        .cart-icon-wrapper { position: relative; display: inline-block; }
+        .cart-count-badge {
+            position: absolute; top: -8px; right: -10px;
+            background-color: #ff0000; color: white; font-size: 10px; font-weight: bold;
+            padding: 2px 5px; border-radius: 50%; min-width: 18px; text-align: center;
+            border: 1px solid white; transition: transform 0.2s ease;
+        }
+        #navbar a { text-decoration: none; }
+        #navbar li { list-style: none; }
+        
+        /* Dropdown Styles */
+        .dropdown-menu { border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 8px; margin-top: 10px; }
+        .dropdown-item { padding: 10px 20px; font-size: 14px; color: #1a1a1a; transition: 0.2s; font-family: 'Poppins', sans-serif; }
+        .dropdown-item:hover { background-color: #f9f5f0; color: #ddaa55; }
+        .dropdown-item.text-danger:hover { background-color: #fff5f5; color: #dc3545; }
+
+        .nav-profile-link::after {
+            content: "\f0d7"; font-family: "Font Awesome 5 Free"; font-weight: 900;
+            margin-left: 5px; font-size: 0.8em; color: #1a1a1a; transition: color 0.3s;
+        }
+        .nav-profile-link:hover::after { color: #088178; }
+
+        .logout-btn {
+            background: none; border: none; width: 100%; text-align: left;
+            font-weight: 500; padding: 10px 20px; color: #dc3545;
+        }
+        .logout-btn:hover { background-color: #fff5f5; }
+    </style>
+  </head>
+
+  <body>
+    
+    {% block header %}
+    <section id="header">
+      <a href="{% url 'home' %}" id="logo-link">
+        <img src="{% static 'MiniStore/TransLogo.png' %}" class="logo" alt="MiniStore Logo">
+      </a>
+
+      <div>
+        <ul id="navbar">
+          
+          {% if user.is_authenticated and user.profile.role == 'ADMIN' %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle nav-profile-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" data-bs-toggle="dropdown">
+                     <i class="fas fa-user-circle"></i> Admin
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}#account-settings">Profile Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+            <li>
+               <a href="{% url 'notifications' %}" class="position-relative">
+                    <i class="fa fa-bell"></i>
+                    {% if notif_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">{{ notif_count }}</span>
+                    {% endif %}
+               </a>
+            </li>
+
+          {% else %}
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop' %}">Shop</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            
+            {% if user.is_authenticated %}
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle nav-profile-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle"></i> Profile
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="{% url 'profile' %}#account-settings" onclick="window.location.hash='#account-settings'; location.reload();">Account Settings</a></li>
+                      <li><a class="dropdown-item" href="{% url 'profile' %}#my-orders" onclick="window.location.hash='#my-orders'; location.reload();">My Purchases</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      {% if user.profile.seller_status == 'APPROVED' %}
+                          <li><a class="dropdown-item fw-bold text-warning" href="{% url 'profile' %}#seller-dashboard" onclick="window.location.hash='#seller-dashboard'; location.reload();">My Shop Dashboard</a></li>
+                      {% elif user.profile.seller_status == 'PENDING' %}
+                          <li><a class="dropdown-item text-muted" href="{% url 'profile' %}#seller-application" onclick="window.location.hash='#seller-application'; location.reload();">Application Pending</a></li>
+                      {% elif user.profile.seller_status == 'CANCELLATION_REQUESTED' %}
+                          <li><a class="dropdown-item text-danger" href="{% url 'profile' %}#seller-dashboard" onclick="window.location.hash='#seller-dashboard'; location.reload();">Cancellation Pending</a></li>
+                      {% else %}
+                          <li><a class="dropdown-item" href="{% url 'become_seller' %}">Sell on Julynesha</a></li>
+                      {% endif %}
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <form method="post" action="{% url 'logout' %}">
+                          {% csrf_token %}
+                          <button type="submit" class="logout-btn">Logout</button>
+                        </form>
+                      </li>
+                  </ul>
+              </li>
+            {% else %}
+              <li><a href="{% url 'login' %}">Login</a></li>
+              <li><a href="{% url 'signup' %}">Sign up</a></li>
+            {% endif %}
+
+            <li>
+                <a href="{% url 'cart_detail' %}" class="cart-icon-wrapper">
+                  <i class="fas fa-shopping-bag"></i>
+                  {% if cart_count > 0 %}
+                      <span class="cart-count-badge" id="cart-count-badge">{{ cart_count }}</span>
+                  {% endif %}
+                </a>
+            </li>
+
+            <li>
+             <a href="{% url 'notifications' %}" class="position-relative">
+                <i class="fa fa-bell"></i>
+                {% if notif_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">{{ notif_count }}</span>
+                {% endif %}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </section>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <footer class="section-p1">
+        <div class="col">
+            <img class="logo" src="{% static 'MiniStore/TransLogo.png' %}" alt="MiniStore Logo">
+            <h4>Contact</h4>
+            <p><strong>Address:</strong> 123 Fashion St, Style City, Country</p>
+            <p><strong>Phone:</strong> +123 456 7890</p>
+            <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
+            <div class="follow">
+              <h4>Follow us</h4>
+              <div class="icon">
+                <i class="fab fa-facebook-f"></i>
+                <i class="fab fa-twitter"></i>
+                <i class="fab fa-instagram"></i>
+                <i class="fab fa-pinterest-p"></i>
+                <i class="fab fa-youtube"></i>
+              </div>
+            </div>
+        </div>
+        <div class="col">
+            <h4>About</h4>
+            <a href="#">About Us</a>
+            <a href="#">Delivery Information</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms &amp; Conditions</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <div class="col">
+            <h4>My Account</h4>
+            <a href="{% url 'login' %}">Sign In</a>
+            <a href="{% url 'cart_detail' %}">View Cart</a>
+            <a href="{% url 'notifications' %}">Notifications</a>
+            <a href="#">Track My Order</a>
+            <a href="#">Help</a>
+        </div>
+        <div class="col install">
+            <h4>Install App</h4>
+            <p>From App Store or Google Play</p>
+            <div class="row">
+              <img src="{% static 'MiniStore/pay/app.jpg' %}" alt="App Store">
+              <img src="{% static 'MiniStore/pay/play.jpg' %}" alt="Google Play">
+            </div>
+            <p>Secured Payment Gateways</p>
+            <img src="{% static 'MiniStore/pay/pay.png' %}" alt="Payment Methods">
+        </div>
+        <div class="copyright"><p>&copy; 2025, WST3 - Julynesha Fashion &amp; Accessories</p></div>
+    </footer>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'MiniStore/script.js' %}"></script>
+  </body>
+</html>

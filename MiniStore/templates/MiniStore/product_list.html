@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - Julynesha{% endblock %}
+
+{% block content %}
+
+<style>
+    /* --- THEME COLORS --- */
+    :root {
+        --theme-gold: #ddaa55;
+        --theme-gold-dark: #c29448;
+        --theme-gold-light: #fdf6e7;
+        --text-dark: #1a1a1a;
+        --bg-light: #fdfdfd;
+    }
+
+    /* --- HERO SECTION --- */
+    #hero {
+        background-color: var(--theme-gold-light);
+        height: 60vh;
+        width: 100%;
+    
+        background-size: cover;
+        background-position: top 25% right 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; 
+        justify-content: center;
+        padding: 0 80px;
+    }
+
+    /* HERO CONTENT */
+    #hero-content{
+        max-width: 50%; 
+        width: 100%;
+        padding: 0 20px; 
+        text-align: left; 
+        box-sizing: border-box; 
+    }
+
+    #hero h4 { padding-bottom: 15px; color: var(--text-dark); font-size: 20px; }
+    #hero h1 { color: var(--theme-gold); font-size: 50px; line-height: 64px; margin-bottom: 10px; }
+    #hero h2 { color: var(--text-dark); font-size: 46px; line-height: 54px; margin-bottom: 20px; }
+    #hero p { font-size: 16px; color: #465b52; margin: 15px 0 20px 0; }
+    
+    #hero button {
+        background-color: var(--theme-gold);
+        color: #fff;
+        border: 0;
+        padding: 15px 40px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 16px;
+        border-radius: 30px; 
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(221, 170, 85, 0.3);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    #hero button:hover { 
+        background-color: var(--theme-gold-dark); 
+        transform: translateY(-4px); 
+        box-shadow: 0 8px 20px rgba(221, 170, 85, 0.4); 
+    }
+
+    /* --- FEATURES SECTION --- */
+    #feature {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 40px 80px;
+    }
+
+    #feature .fe-box {
+        width: 180px;
+        text-align: center;
+        padding: 25px 15px;
+        box-shadow: 20px 20px 34px rgba(0, 0, 0, 0.03);
+        border: 1px solid #cce7d0;
+        border-radius: 4px;
+        margin: 15px 0;
+        background-color: #fff;
+        transition: 0.3s ease;
+    }
+
+    #feature .fe-box:hover { box-shadow: 10px 10px 54px rgba(70, 62, 221, 0.1); transform: translateY(-3px); }
+    #feature .fe-box img { width: 100%; margin-bottom: 10px; }
+    #feature .fe-box h6 {
+        display: inline-block;
+        padding: 9px 8px 6px 8px;
+        line-height: 1;
+        border-radius: 4px;
+        color: #088178;
+        background-color: #fddde4;
+    }
+    #feature .fe-box:nth-child(2) h6 { background-color: #cdebbc; }
+    #feature .fe-box:nth-child(3) h6 { background-color: #d1e8f2; }
+    #feature .fe-box:nth-child(4) h6 { background-color: #cdd4f8; }
+    #feature .fe-box:nth-child(5) h6 { background-color: #f6dbdb; }
+    #feature .fe-box:nth-child(6) h6 { background-color: #fff2e5; }
+
+    /* --- PRODUCT GRID --- */
+    .pro-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 25px;
+        padding: 20px 80px;
+        justify-content: center;
+    }
+
+    .pro {
+        width: 100%;
+        border: 1px solid #ececec;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        transition: 0.3s ease;
+        background: #fff;
+        display: flex;
+        flex-direction: column; 
+        justify-content: space-between;
+        height: 100%; 
+        cursor: pointer;
+        position: relative; /* Added for proper stacking context */
+    }
+
+    .pro:hover { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); transform: translateY(-5px); }
+    
+    .pro img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover; 
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .pro .des { text-align: start; padding: 8px 0; flex-grow: 1; }
+    .pro .des span { color: #606063; font-size: 13px; text-transform: capitalize; }
+    .pro .des h5 {
+        padding-top: 7px;
+        color: var(--text-dark);
+        font-size: 15px;
+        font-weight: 700;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2; 
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 42px; 
+        margin-bottom: 5px;
+    }
+    .pro .des i { font-size: 12px; color: rgb(243, 181, 25); }
+    .pro .des h4 { padding-top: 7px; font-size: 16px; font-weight: 700; color: var(--theme-gold); }
+
+    .pro .cart-btn-link {
+        align-self: flex-end; 
+        width: 45px; 
+        height: 45px;
+        line-height: 45px;
+        border-radius: 50px;
+        background-color: var(--theme-gold-light);
+        color: var(--theme-gold);
+        border: 1px solid #efe3cc;
+        text-align: center;
+        transition: 0.3s;
+        margin-top: auto; 
+        font-size: 18px;
+        z-index: 10; /* Ensure button is above the card click area */
+    }
+    .pro .cart-btn-link:hover { background-color: var(--theme-gold); color: #fff; }
+
+    /* --- BANNER SECTION --- */
+    #banner {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: var(--theme-gold-light); 
+        width: 100%;
+        height: 40vh;
+        background-size: cover;
+        background-position: center;
+        margin: 40px 0;
+    }
+    #banner h4 { color: var(--text-dark); font-size: 16px; }
+    #banner h2 { color: var(--text-dark); font-size: 30px; padding: 10px 0; }
+    #banner h2 span { color: var(--theme-gold); }
+    #banner button:hover { background-color: var(--theme-gold); color: #fff; }
+
+    /* --- PAGINATION --- */
+    #pagination {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    #pagination a {
+        text-decoration: none;
+        background-color: var(--theme-gold);
+        padding: 12px 18px;
+        border-radius: 4px;
+        color: #fff;
+        font-weight: 600;
+        margin: 0 5px;
+        transition: 0.3s ease;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    #pagination a.active {
+        background-color: var(--theme-gold-dark);
+        cursor: default;
+        transform: scale(1.05);
+    }
+
+    #pagination a:hover:not(.active) {
+        background-color: var(--theme-gold-dark);
+        transform: translateY(-2px);
+    }
+    
+    #pagination i { font-size: 14px; }
+
+    /* Responsive */
+    @media (max-width: 799px) {
+        #hero { height: 40vh; padding: 0 20px; background-position: top 30% right 30%; }
+        #feature { justify-content: center; padding: 20px; }
+        #feature .fe-box { margin: 15px 15px; }
+        .pro-container { padding: 20px; }
+        #banner { height: 20vh; }
+    }
+</style>
+
+<section id="hero">
+    <div class="hero-content">
+        <h4>Trade-in-offer</h4>
+    <h1>Super value deals</h1>
+    <h2>On all products</h2>
+    <p>Save more with coupons & up to 70% off!</p>
+    <a href="{% url 'shop' %}"><button>Shop Now</button></a>
+    </div>
+</section>
+
+<section id="feature" class="section-p1">
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f1.png' %}" alt="Free Shipping" onerror="this.style.display='none'">
+        <h6>Free Shipping</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f2.png' %}" alt="Online Order" onerror="this.style.display='none'">
+        <h6>Online Order</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f3.png' %}" alt="Save Money" onerror="this.style.display='none'">
+        <h6>Save Money</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f4.png' %}" alt="Promotions" onerror="this.style.display='none'">
+        <h6>Promotions</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f5.png' %}" alt="Happy Sell" onerror="this.style.display='none'">
+        <h6>Happy Sell</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'MiniStore/features/f6.png' %}" alt="24/7 Support" onerror="this.style.display='none'">
+        <h6>24/7 Support</h6>
+    </div>
+</section>
+
+<section id="product1" class="section-p1">
+    <h2 class="title" style="text-align: center; margin-bottom: 10px;">Featured Products</h2>
+    <p style="text-align: center; margin-bottom: 40px;">Summer Collection New Morden Design</p>
+    
+    <div class="pro-container">
+      {% for product in products %}
+      <div class="pro" 
+           data-url="{% url 'product_detail' product.slug %}" 
+           onclick="window.location.href=this.dataset.url;">
+        
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'MiniStore/products/dress/sage.png' %}" alt="Default Image">
+        {% endif %}
+
+        <div class="des">
+          <span>{{ product.category.name|default:"General" }}</span>
+          <h5>{{ product.name }}</h5>
+          <div class="star">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <h4>₱{{ product.price }}</h4>
+        </div>
+
+        <a href="javascript:void(0);" 
+           data-url="{% url 'cart_add' product.id %}" 
+           class="cart-btn-link add-to-cart-ajax">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
+      </div>
+      {% empty %}
+        <p style="text-align: center; width: 100%;">No featured products found.</p>
+      {% endfor %}
+    </div>
+</section>
+
+<section id="banner" class="section-m1">
+    <h4>Repair Services</h4>
+    <h2>Up to <span>70% Off</span> - All T-Shirts & Accessories</h2>
+    <a href="{% url 'shop' %}">
+        <button class="normal" style="padding: 10px 20px; border-radius: 4px; background: #fff; border: none; font-weight: 600;">Explore More</button>
+    </a>
+</section>
+
+<section id="product1" class="section-p1">
+    <h2 class="title" style="text-align: center; margin-bottom: 10px;">New Arrivals</h2>
+    <p style="text-align: center; margin-bottom: 40px;">Summer Collection New Morden Design</p>
+    
+    <div class="pro-container">
+      {% for product in products %}
+      <div class="pro" 
+           data-url="{% url 'product_detail' product.slug %}" 
+           onclick="window.location.href=this.dataset.url;">
+        
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'MiniStore/products/dress/sage.png' %}" alt="Default Image">
+        {% endif %}
+
+        <div class="des">
+          <span>{{ product.category.name|default:"Brand" }}</span>
+          <h5>{{ product.name }}</h5>
+          <div class="star">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <h4>₱{{ product.price }}</h4>
+        </div>
+
+        <a href="javascript:void(0);" 
+           data-url="{% url 'cart_add' product.id %}" 
+           class="cart-btn-link add-to-cart-ajax">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
+      </div>
+      {% empty %}
+        <p style="text-align: center; width: 100%;">No new arrivals found.</p>
+      {% endfor %}
+    </div>
+</section>
+
+{% if products.has_other_pages %}
+<section id="pagination" class="section-p1">
+    {% if products.has_previous %}
+      <a href="?page={{ products.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+          <i class="fas fa-long-arrow-alt-left"></i>
+      </a>
+    {% endif %}
+
+    {% for num in products.paginator.page_range %}
+      {% if products.number == num %}
+          <a href="#" class="active">{{ num }}</a>
+      {% else %}
+          <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if products.has_next %}
+      <a href="?page={{ products.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+          <i class="fas fa-long-arrow-alt-right"></i>
+      </a>
+    {% endif %}
+</section>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const cartButtons = document.querySelectorAll('.add-to-cart-ajax');
+
+        cartButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                // 1. Prevent link navigation
+                e.preventDefault();
+                // 2. Stop bubbling to the product card click event
+                e.stopPropagation();
+
+                const url = this.getAttribute('data-url');
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url; // Redirect to login if needed
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        alert("Item added to cart!");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+
+{% endblock %}
